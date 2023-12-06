@@ -1,12 +1,14 @@
 package com.adiha.EventScheduler.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "events")
+@Data
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
