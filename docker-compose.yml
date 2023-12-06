@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    image: 'es-app'
+    container_name: 'EventScheduler'
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    environment:
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/event_scheduler
+      - spring.datasource.username=postgres
+      - spring.datasource.password=Aa123456
+      - spring.jpa.hibernate.ddl-auto=update
+
+  postgres:
+    image: 'postgres:16-alpine'
+    container_name: 'Postgres'
+    ports:
+      - 5432:5432
+    environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: Aa123456
+        POSTGRES_DB: event_scheduler
