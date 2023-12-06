@@ -21,7 +21,11 @@ public class Event {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
+    @Column(nullable = false)
+    private UUID creatingUserId;
+
     private String location;
 
     private String venue;
+
 }
