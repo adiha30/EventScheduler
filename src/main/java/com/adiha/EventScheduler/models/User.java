@@ -2,6 +2,7 @@ package com.adiha.EventScheduler.models;
 
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "CHAR(36)")
     private UUID userId;
 
     @Column(nullable = false)
