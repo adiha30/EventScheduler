@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface EventRepository extends JpaRepository<Event, String>, JpaSpecificationExecutor<Event> {
     @Query("SELECT e FROM Event e LEFT JOIN FETCH e.users u GROUP BY e ORDER BY COUNT(u) DESC")

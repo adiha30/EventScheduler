@@ -29,6 +29,12 @@ public class EventsController {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
+    private static ResponseStatusException throwNotFoundException(String eventId) {
+        return new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                String.format("Event with uuid %s was not found", eventId));
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/events")
     public List<Event> getAllEvents(@RequestParam(value = "sort", required = false, defaultValue = CREATION_TIME) String sort,
@@ -115,12 +121,6 @@ public class EventsController {
         return !sort.equals(CREATION_TIME)
                 && !sort.equals(START_TIME)
                 && !sort.equals(POPULARITY);
-    }
-
-    private static ResponseStatusException throwNotFoundException(String eventId) {
-        return new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                String.format("Event with uuid %s was not found", eventId));
     }
 
     private Event updateEvent(Event event, Event eventToUpdate) {
