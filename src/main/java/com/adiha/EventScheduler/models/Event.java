@@ -1,8 +1,10 @@
 package com.adiha.EventScheduler.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.Type;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
@@ -12,6 +14,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "events")
 @Data
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Event {
     @Id
     @UuidGenerator

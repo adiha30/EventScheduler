@@ -19,6 +19,6 @@ public class EventByVenue implements Specification<Event> {
             return cb.isTrue(cb.literal(true));
         }
 
-        return cb.equal(root.get("location"), this.venue);
+        return cb.equal(root.get("venue"), this.venue);
     }
 }

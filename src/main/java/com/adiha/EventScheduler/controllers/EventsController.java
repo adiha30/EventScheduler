@@ -3,6 +3,7 @@ package com.adiha.EventScheduler.controllers;
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.specifications.EventByLocation;
+import com.adiha.EventScheduler.specifications.EventByVenue;
 import com.adiha.EventScheduler.utils.mapper.EventMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -63,7 +63,7 @@ public class EventsController {
 
         Specification<Event> spec = Specification
                 .where(new EventByLocation(location))
-                .and(new EventByLocation(venue));
+                .and(new EventByVenue(venue));
 
         if (POPULARITY.equals(sort)) {
             return eventRepository.findAllOrderByPopularity(spec);
@@ -96,12 +96,11 @@ public class EventsController {
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/events/{eventId}")
-    public Event deleteEvent(@PathVariable(value = "eventId") String eventId) {
+    public void deleteEvent(@PathVariable(value = "eventId") String eventId) {
         logger.debug("Deleting event with id: {}", eventId);
 
-        return eventRepository.findById(eventId)
-                .map(this::deleteAndReturn)
-                .orElseThrow(() -> throwNotFoundException(eventId));
+        eventRepository.findById(eventId)
+                .ifPresentOrElse(eventRepository::delete, () -> throwNotFoundException(eventId));
     }
 
     private Sort getSortingParameters(String sort, String order) {
@@ -122,12 +121,6 @@ public class EventsController {
         return new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 String.format("Event with uuid %s was not found", eventId));
-    }
-
-    private Event deleteAndReturn(Event event) {
-        eventRepository.delete(event);
-
-        return event;
     }
 
     private Event updateEvent(Event event, Event eventToUpdate) {
