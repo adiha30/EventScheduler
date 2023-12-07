@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -18,6 +19,9 @@ public class Event {
     private String name;
 
     @Column(nullable = false)
+    private LocalDateTime creationTime = LocalDateTime.now();
+
+    @Column(nullable = false)
     private LocalDateTime startTime;
 
     @Column(nullable = false)
@@ -29,5 +33,12 @@ public class Event {
     private String location;
 
     private String venue;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "event_subscriptions",
+            joinColumns = @JoinColumn(name = "event_id"))
+    @Column(name = "user_id")
+    private Set<UUID> users;
 
 }
