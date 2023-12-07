@@ -3,6 +3,7 @@ package com.adiha.EventScheduler.models;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -13,9 +14,8 @@ import java.util.UUID;
 @Data
 public class Event {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(columnDefinition = "CHAR(36)")
-    private UUID eventId;
+    @UuidGenerator
+    private String eventId;
 
     @Column(nullable = false)
     private String name;

@@ -29,7 +29,7 @@ public class EventsController {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/events")
     public List<Event> getAllEvents(@RequestParam(value = "sort", required = false, defaultValue = CREATION_TIME) String sort,
                                     @RequestParam(value = "direction", required = false, defaultValue = "ASC") String order) {
@@ -44,15 +44,15 @@ public class EventsController {
         return eventRepository.findAll(sortingParameters);
     }
 
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/events/{eventId}")
-    public Event getEventById(@PathVariable(value = "eventId") UUID eventId) {
+    public Event getEventById(@PathVariable(value = "eventId") String eventId) {
         logger.debug("Retrieving event with id: {}", eventId);
 
         return eventRepository.findById(eventId).orElseThrow(() -> throwNotFoundException(eventId));
     }
 
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/events/filter")
     public List<Event> getEventsByLocationAndVenue(
             @RequestParam(value = "location", required = false) String location,
@@ -84,7 +84,7 @@ public class EventsController {
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/events/{eventId}")
-    public Event updateEvent(@PathVariable(value = "eventId") UUID eventId, @Validated @RequestBody Event event) {
+    public Event updateEvent(@PathVariable(value = "eventId") String eventId, @Validated @RequestBody Event event) {
         logger.debug("Updating event with id: {}", eventId);
 
         Event updatedEvent = eventRepository.findById(eventId)
@@ -96,7 +96,7 @@ public class EventsController {
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/events/{eventId}")
-    public Event deleteEvent(@PathVariable(value = "eventId") UUID eventId) {
+    public Event deleteEvent(@PathVariable(value = "eventId") String eventId) {
         logger.debug("Deleting event with id: {}", eventId);
 
         return eventRepository.findById(eventId)
@@ -118,7 +118,7 @@ public class EventsController {
                 && !sort.equals(POPULARITY);
     }
 
-    private static ResponseStatusException throwNotFoundException(UUID eventId) {
+    private static ResponseStatusException throwNotFoundException(String eventId) {
         return new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 String.format("Event with uuid %s was not found", eventId));
