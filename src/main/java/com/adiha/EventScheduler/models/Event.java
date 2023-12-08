@@ -46,6 +46,6 @@ public class Event {
             name = "event_subscriptions",
             joinColumns = @JoinColumn(name = "event_id"))
     @Column(name = "user_id")
-    private Set<UUID> users;
+    private Set<UUID> subscribers;
 
 }
