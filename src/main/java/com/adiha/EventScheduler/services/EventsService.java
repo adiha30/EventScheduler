@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-import static com.adiha.EventScheduler.utils.mapper.Constants.*;
+import static com.adiha.EventScheduler.utils.Constants.*;
 
 @Service
 @RequiredArgsConstructor

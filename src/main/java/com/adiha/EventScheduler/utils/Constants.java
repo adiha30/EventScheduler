@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.utils.mapper;
+package com.adiha.EventScheduler.utils;
 
 public class Constants {
     public static final String CREATION_TIME = "creationTime";

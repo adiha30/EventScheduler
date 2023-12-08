@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.adiha.EventScheduler.utils.mapper.Constants.CREATION_TIME;
+import static com.adiha.EventScheduler.utils.Constants.CREATION_TIME;
 
 @RestController
 @RequestMapping("/api/v1")
