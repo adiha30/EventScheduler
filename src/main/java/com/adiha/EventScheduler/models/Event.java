@@ -26,6 +26,7 @@ public class Event {
     private String name;
 
     @Column(nullable = false)
+    @Builder.Default
     private LocalDateTime creationTime = LocalDateTime.now();
 
     @Column(nullable = false)
@@ -35,7 +36,7 @@ public class Event {
     private LocalDateTime endTime;
 
     @Column(nullable = false)
-    private UUID creatingUserId;
+    private String creatingUserId;
 
     private String location;
 
@@ -46,6 +47,6 @@ public class Event {
             name = "event_subscriptions",
             joinColumns = @JoinColumn(name = "event_id"))
     @Column(name = "user_id")
-    private Set<UUID> users;
+    private Set<String> users;
 
 }

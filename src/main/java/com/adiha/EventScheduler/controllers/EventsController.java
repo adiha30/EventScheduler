@@ -50,24 +50,23 @@ public class EventsController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events/multiple")
     public List<Event> createEvents(@Validated @RequestBody List<Event> events) {
-        return eventsService.createEvents(events);
+        return eventsService.createAll(events);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/events/{eventId}")
+    @PutMapping("/events/{eventId}")
     public Event updateEvent(@PathVariable(value = "eventId") String eventId, @Validated @RequestBody Event event) {
         return eventsService.updateEvent(eventId, event);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/events/multiple")
+    @PutMapping("/events/multiple")
     public List<Event> updateEvents(@Validated @RequestBody List<Event> events) {
         List<Event> updatedEvents = new ArrayList<>();
 
         events.forEach((Event event) ->
-                updatedEvents.add(
-                        eventsService.updateEvent(event.getEventId(), event)
-        ));
+                updatedEvents.add(eventsService.updateEvent(event.getEventId(), event))
+        );
 
         return updatedEvents;
     }
