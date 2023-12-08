@@ -23,7 +23,6 @@ import static com.adiha.EventScheduler.utils.Constants.*;
 public class EventsService {
     private final Logger logger = LoggerFactory.getLogger(EventsService.class);
 
-
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
@@ -101,7 +100,7 @@ public class EventsService {
     }
 
     private Sort getSortingParameters(String sort, String order) {
-        if (sortNotAllowed(sort)) {
+        if (sort == null || sortNotAllowed(sort)) {
             throw new IllegalArgumentException("Sorting can only be done on 'creationTime' or 'startDate'");
         }
 
