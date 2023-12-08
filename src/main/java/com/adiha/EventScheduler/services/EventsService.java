@@ -18,6 +18,9 @@ import java.util.List;
 
 import static com.adiha.EventScheduler.utils.Constants.*;
 
+/**
+ * Service class for handling operations related to events.
+ */
 @Service
 @RequiredArgsConstructor
 public class EventsService {
@@ -26,7 +29,13 @@ public class EventsService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
-
+    /**
+     * Retrieves all events, optionally sorted by a specified field and order.
+     *
+     * @param sort the field to sort by
+     * @param order the order to sort by (ASC or DESC)
+     * @return a list of all events
+     */
     public List<Event> getAll(String sort, String order) {
         logger.debug("Retrieving all events");
 
@@ -39,12 +48,27 @@ public class EventsService {
         return eventRepository.findAll(sortingParameters);
     }
 
+    /**
+     * Retrieves an event by its ID.
+     *
+     * @param eventId the ID of the event
+     * @return the event with the specified ID
+     */
     public Event getEventById(String eventId) {
         logger.debug("Retrieving event with id: {}", eventId);
 
         return eventRepository.findById(eventId).orElseThrow(() -> throwNotFoundException(eventId));
     }
 
+    /**
+     * Retrieves events by location and venue, optionally sorted by a specified field and order.
+     *
+     * @param location the location to filter by
+     * @param venue the venue to filter by
+     * @param sort the field to sort by
+     * @param order the order to sort by (ASC or DESC)
+     * @return a list of events that match the specified location and venue
+     */
     public List<Event> getEventsByLocationAndVenue(
             String location,
             String venue,
@@ -63,16 +87,35 @@ public class EventsService {
         return eventRepository.findAll(spec, sortingParameters);
     }
 
+    /**
+     * Creates a new event.
+     *
+     * @param event the event to create
+     * @return the created event
+     */
     public Event createEvent(Event event) {
         logger.debug("Creating event: {}", event);
 
         return eventRepository.save(event);
     }
 
+    /**
+     * Creates multiple new events.
+     *
+     * @param events the events to create
+     * @return the created events
+     */
     public List<Event> createAll(List<Event> events) {
         return eventRepository.saveAll(events);
     }
 
+    /**
+     * Updates an existing event.
+     *
+     * @param eventId the ID of the event to update
+     * @param event the new event data
+     * @return the updated event
+     */
     public Event updateEvent(String eventId, Event event) {
         logger.debug("Updating event with id: {}", eventId);
 
@@ -83,6 +126,11 @@ public class EventsService {
         return eventRepository.save(updatedEvent);
     }
 
+    /**
+     * Deletes an event by its ID.
+     *
+     * @param eventId the ID of the event to delete
+     */
     public void deleteEvent(String eventId) {
         logger.debug("Deleting event with id: {}", eventId);
 
@@ -96,6 +144,11 @@ public class EventsService {
         throwNotFoundException(eventId);
     }
 
+    /**
+     * Deletes multiple events by their IDs.
+     *
+     * @param eventIds the IDs of the events to delete
+     */
     public void deleteAll(List<String> eventIds) {
         logger.debug("Deleting events with ids: {}", eventIds);
 
