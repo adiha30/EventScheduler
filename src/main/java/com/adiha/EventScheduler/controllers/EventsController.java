@@ -50,7 +50,7 @@ public class EventsController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events/multiple")
     public List<Event> createEvents(@Validated @RequestBody List<Event> events) {
-        return eventsService.createEvents(events);
+        return eventsService.createAll(events);
     }
 
     @ResponseStatus(HttpStatus.OK)

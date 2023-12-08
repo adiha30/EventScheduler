@@ -3,7 +3,6 @@ package com.adiha.EventScheduler.services.crud;
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.services.EventsService;
-import com.google.common.truth.Truth;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -68,7 +67,7 @@ public class PostOperationsTest {
         Event event2 = getSimpleEvent();
         List<Event> eventsToInsert = List.of(event1, event2);
 
-        List<Event> eventsInserted = sut.createEvents(eventsToInsert);
+        List<Event> eventsInserted = sut.createAll(eventsToInsert);
 
         Assertions.assertAll(
                 () -> assertWithMessage("Created events are null")
@@ -86,7 +85,7 @@ public class PostOperationsTest {
     void testCreateMultipleEventsWithNullEvents() {
         Assertions.assertThrows(
                 InvalidDataAccessApiUsageException.class,
-                () -> sut.createEvents(null)
+                () -> sut.createAll(null)
         );
     }
 

@@ -69,7 +69,7 @@ public class EventsService {
         return eventRepository.save(event);
     }
 
-    public List<Event> createEvents(List<Event> events) {
+    public List<Event> createAll(List<Event> events) {
         return eventRepository.saveAll(events);
     }
 
@@ -86,7 +86,14 @@ public class EventsService {
     public void deleteEvent(String eventId) {
         logger.debug("Deleting event with id: {}", eventId);
 
-        eventRepository.deleteById(eventId);
+        if (eventId == null) {
+            throw new IllegalArgumentException("Event id cannot be null");
+        } else if (eventRepository.findById(eventId).isPresent()) {
+            eventRepository.deleteById(eventId);
+            return;
+        }
+
+        throwNotFoundException(eventId);
     }
 
     public void deleteAll(List<String> eventIds) {
@@ -124,7 +131,7 @@ public class EventsService {
     }
 
     private static ResponseStatusException throwNotFoundException(String eventId) {
-        return new ResponseStatusException(
+        throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 String.format("Event with uuid %s was not found", eventId));
     }
