@@ -72,6 +72,10 @@ public class EventsService {
         return eventRepository.save(event);
     }
 
+    public List<Event> createEvents(List<Event> events) {
+        return eventRepository.saveAll(events);
+    }
+
     public Event updateEvent(String eventId, Event event) {
         logger.debug("Updating event with id: {}", eventId);
 
@@ -86,6 +90,14 @@ public class EventsService {
         logger.debug("Deleting event with id: {}", eventId);
 
         eventRepository.deleteById(eventId);
+    }
+
+    public void deleteAll(List<String> eventIds) {
+        logger.debug("Deleting events with ids: {}", eventIds);
+
+        List<Event> eventsToDelete = eventRepository.findAllById(eventIds);
+
+        eventRepository.deleteAll(eventsToDelete);
     }
 
     private Sort getSortingParameters(String sort, String order) {

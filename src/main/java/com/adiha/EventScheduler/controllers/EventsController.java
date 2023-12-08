@@ -1,17 +1,13 @@
 package com.adiha.EventScheduler.controllers;
 
 import com.adiha.EventScheduler.models.Event;
-import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.services.EventsService;
-import com.adiha.EventScheduler.utils.mapper.EventMapper;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.adiha.EventScheduler.utils.mapper.Constants.CREATION_TIME;
@@ -51,6 +47,12 @@ public class EventsController {
         return eventsService.createEvent(event);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/events/multiple")
+    public List<Event> createEvents(@Validated @RequestBody List<Event> events) {
+        return eventsService.createEvents(events);
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/events/{eventId}")
     public Event updateEvent(@PathVariable(value = "eventId") String eventId, @Validated @RequestBody Event event) {
@@ -58,8 +60,27 @@ public class EventsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/events/multiple")
+    public List<Event> updateEvents(@Validated @RequestBody List<Event> events) {
+        List<Event> updatedEvents = new ArrayList<>();
+
+        events.forEach((Event event) ->
+                updatedEvents.add(
+                        eventsService.updateEvent(event.getEventId(), event)
+        ));
+
+        return updatedEvents;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/events/{eventId}")
     public void deleteEvent(@PathVariable(value = "eventId") String eventId) {
         eventsService.deleteEvent(eventId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/events/multiple")
+    public void deleteEvents(@RequestParam(value = "eventIds") List<String> eventIds) {
+        eventsService.deleteAll(eventIds);
     }
 }
