@@ -15,7 +15,7 @@ public class EventByVenue implements Specification<Event> {
 
     @Override
     public Predicate toPredicate(Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        if (venue == null) {
+        if (venue == null || venue.isEmpty()) {
             return cb.isTrue(cb.literal(true));
         }
 

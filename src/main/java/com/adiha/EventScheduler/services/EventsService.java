@@ -31,7 +31,7 @@ public class EventsService {
         logger.debug("Retrieving all events");
 
         if (POPULARITY.equals(sort)) {
-            return eventRepository.findAllOrderByPopularity();
+            return getEventSortedBy(order);
         }
 
         Sort sortingParameters = getSortingParameters(sort, order);
@@ -52,12 +52,10 @@ public class EventsService {
             String order) {
         logger.debug("Retrieving events with location: {} and venue: {}", location, venue);
 
-        Specification<Event> spec = Specification
-                .where(new EventByLocation(location))
-                .and(new EventByVenue(venue));
+        Specification<Event> spec = getSpecification(location, venue);
 
         if (POPULARITY.equals(sort)) {
-            return eventRepository.findAllOrderByPopularity(spec);
+            return getEventSortedBy(order);
         }
 
         Sort sortingParameters = getSortingParameters(sort, order);
@@ -97,6 +95,18 @@ public class EventsService {
         List<Event> eventsToDelete = eventRepository.findAllById(eventIds);
 
         eventRepository.deleteAll(eventsToDelete);
+    }
+
+    private List<Event> getEventSortedBy(String order) {
+        return DESCENDING.equals(order)
+                ? eventRepository.findAllOrderByPopularityDesc()
+                : eventRepository.findAllOrderByPopularityAsc();
+    }
+
+    private static Specification<Event> getSpecification(String location, String venue) {
+        return Specification
+                .where(new EventByLocation(location))
+                .and(new EventByVenue(venue));
     }
 
     private Sort getSortingParameters(String sort, String order) {

@@ -15,7 +15,7 @@ public class EventByLocation implements Specification<Event> {
 
     @Override
     public Predicate toPredicate(Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        if (location == null) {
+        if (location == null || location.isEmpty()) {
             return cb.isTrue(cb.literal(true));
         }
 
