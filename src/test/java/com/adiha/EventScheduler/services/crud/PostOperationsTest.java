@@ -16,6 +16,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.adiha.EventScheduler.TestUtils.getSimpleEvent;
 import static com.google.common.truth.Truth.assertWithMessage;
 
@@ -55,6 +57,36 @@ public class PostOperationsTest {
         Assertions.assertThrows(
                 InvalidDataAccessApiUsageException.class,
                 () -> sut.createEvent(null)
+        );
+    }
+
+    @Test
+    @DisplayName("Test create multiple events")
+    @Transactional
+    void testCreateMultipleEvents() {
+        Event event1 = getSimpleEvent();
+        Event event2 = getSimpleEvent();
+        List<Event> eventsToInsert = List.of(event1, event2);
+
+        List<Event> eventsInserted = sut.createEvents(eventsToInsert);
+
+        Assertions.assertAll(
+                () -> assertWithMessage("Created events are null")
+                        .that(eventsInserted)
+                        .isNotNull(),
+                () -> assertWithMessage("Events were not inserted")
+                        .that(eventRepository.findAll())
+                        .containsExactlyElementsIn(eventsToInsert)
+        );
+    }
+
+    @Test
+    @DisplayName("Test create multiple events with null events")
+    @Transactional
+    void testCreateMultipleEventsWithNullEvents() {
+        Assertions.assertThrows(
+                InvalidDataAccessApiUsageException.class,
+                () -> sut.createEvents(null)
         );
     }
 
