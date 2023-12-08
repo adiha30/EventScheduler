@@ -24,7 +24,7 @@ public class EventsController {
     /**
      * Get all events, optionally sorted by a specified field and order.
      *
-     * @param sort the field to sort by
+     * @param sort  the field to sort by
      * @param order the order to sort by (ASC or DESC)
      * @return a list of all events
      */
@@ -51,9 +51,9 @@ public class EventsController {
      * Get events by location and venue, optionally sorted by a specified field and order.
      *
      * @param location the location to filter by
-     * @param venue the venue to filter by
-     * @param sort the field to sort by
-     * @param order the order to sort by (ASC or DESC)
+     * @param venue    the venue to filter by
+     * @param sort     the field to sort by
+     * @param order    the order to sort by (ASC or DESC)
      * @return a list of events that match the specified location and venue
      */
     @ResponseStatus(HttpStatus.OK)
@@ -94,7 +94,7 @@ public class EventsController {
      * Update an existing event.
      *
      * @param eventId the ID of the event to update
-     * @param event the new event data
+     * @param event   the new event data
      * @return the updated event
      */
     @ResponseStatus(HttpStatus.OK)

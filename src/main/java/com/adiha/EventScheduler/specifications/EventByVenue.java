@@ -23,9 +23,9 @@ public class EventByVenue implements Specification<Event> {
     /**
      * Creates a predicate for filtering events by venue.
      *
-     * @param root the root type in the from clause, used to form the predicate
+     * @param root  the root type in the from clause, used to form the predicate
      * @param query the criteria query
-     * @param cb the criteria builder, used to build the predicate
+     * @param cb    the criteria builder, used to build the predicate
      * @return a predicate for filtering events by venue
      */
     @Override

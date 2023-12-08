@@ -29,10 +29,22 @@ public class EventsService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
+    private static Specification<Event> getSpecification(String location, String venue) {
+        return Specification
+                .where(new EventByLocation(location))
+                .and(new EventByVenue(venue));
+    }
+
+    private static ResponseStatusException throwNotFoundException(String eventId) {
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                String.format("Event with uuid %s was not found", eventId));
+    }
+
     /**
      * Retrieves all events, optionally sorted by a specified field and order.
      *
-     * @param sort the field to sort by
+     * @param sort  the field to sort by
      * @param order the order to sort by (ASC or DESC)
      * @return a list of all events
      */
@@ -64,9 +76,9 @@ public class EventsService {
      * Retrieves events by location and venue, optionally sorted by a specified field and order.
      *
      * @param location the location to filter by
-     * @param venue the venue to filter by
-     * @param sort the field to sort by
-     * @param order the order to sort by (ASC or DESC)
+     * @param venue    the venue to filter by
+     * @param sort     the field to sort by
+     * @param order    the order to sort by (ASC or DESC)
      * @return a list of events that match the specified location and venue
      */
     public List<Event> getEventsByLocationAndVenue(
@@ -113,7 +125,7 @@ public class EventsService {
      * Updates an existing event.
      *
      * @param eventId the ID of the event to update
-     * @param event the new event data
+     * @param event   the new event data
      * @return the updated event
      */
     public Event updateEvent(String eventId, Event event) {
@@ -163,12 +175,6 @@ public class EventsService {
                 : eventRepository.findAllOrderByPopularityAsc();
     }
 
-    private static Specification<Event> getSpecification(String location, String venue) {
-        return Specification
-                .where(new EventByLocation(location))
-                .and(new EventByVenue(venue));
-    }
-
     private Sort getSortingParameters(String sort, String order) {
         if (sort == null || sortNotAllowed(sort)) {
             throw new IllegalArgumentException("Sorting can only be done on 'creationTime' or 'startDate'");
@@ -181,12 +187,6 @@ public class EventsService {
         return !sort.equals(CREATION_TIME)
                 && !sort.equals(START_TIME)
                 && !sort.equals(POPULARITY);
-    }
-
-    private static ResponseStatusException throwNotFoundException(String eventId) {
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                String.format("Event with uuid %s was not found", eventId));
     }
 
     private Event updateEvent(Event event, Event eventToUpdate) {
