@@ -1,15 +1,18 @@
-# EventScheduler
-API Backend for the Event Scheduler app
+# EventScheduler API Documentation
 
 ## Authentication and Authorization
 
 All CRUD endpoints require a registered user with an authentication token. The update and delete operations can only be performed by the user who created the event. The only non-authenticated endpoints are the register and authenticate ones.
 
+### Security Considerations
+
+Ensure the secure handling of authentication tokens and be aware of potential security risks. Protect the token and implement secure practices to safeguard user data.
+
 ## Endpoints
 
 ### Event Endpoints
 
-Each of the following endpoints requires an authenticated user. The user must include their authentication token in the header of the request. The update and delete operations can only be performed by the user who created the event.
+Each of the following endpoints requires an authenticated user. The user must include their authentication token in the header of the request. Update and delete operations can only be performed by the user who created the event.
 
 1. **GET /api/v1/events**
     - Description: Retrieves all events, optionally sorted by a specified field and order.
@@ -81,18 +84,21 @@ The following endpoints do not require authentication:
     - Request Body: The user's login details.
     - Response: The authentication token.
 
-Please note that the request and response formats depend on the `Event` and `User` entities. The `Event` entity has the following fields: `eventId`, `name`, `creationTime`, `startTime`, `endTime`, `creatingUserId`, `location`, `venue`, `users`. The `User` entity has the following fields: `userId`, `username`, `password`, `role`.
+## Request and Response Format
+
+Note that the request and response formats depend on the `Event` and `User` entities. The `Event` entity has the following fields: `eventId`, `name`, `creationTime`, `startTime`, `endTime`, `creatingUserId`, `location`, `venue`, `users`. The `User` entity has the following fields: `userId`, `username`, `password`, `role`.
+
+## Error Handling
+
+Proper error handling is essential for a smooth experience. Be aware of the potential errors users might encounter and the corresponding HTTP status codes and error responses.
 
 ## Execution
 
 To execute this project, navigate to the project's directory and execute the following commands:
 
-1. Build the Docker image:
 ```bash
+# Build the Docker image
 docker build -t es-app -f Dockerfile .
-```
 
-2. Start the Docker containers:
-```bash
-docker compose up -d
-```
+# Start the Docker containers
+docker-compose up -d
