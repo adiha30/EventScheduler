@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.config;
+package com.adiha.EventScheduler.config.securtiy;
 
 import com.adiha.EventScheduler.services.auth.JwtService;
 import jakarta.servlet.FilterChain;

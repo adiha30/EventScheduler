@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.config;
+package com.adiha.EventScheduler.config.securtiy;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

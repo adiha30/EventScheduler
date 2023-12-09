@@ -44,19 +44,20 @@ public abstract class CrudService {
     }
 
     /**
-     * This public method retrieves the User entity of the currently authenticated user.
+     * This public method retrieves the ID of the currently authenticated user.
      * It uses the getUsernameOfExecutor method to get the username of the currently authenticated user.
      * Then, it uses the UserRepository to find the User entity with the retrieved username.
      * If the User entity is not found, it throws a UsernameNotFoundException.
      *
-     * @return The User entity of the currently authenticated user.
+     * @return The ID of the currently authenticated user.
      * @throws UsernameNotFoundException if the User entity is not found.
      */
-    public User getActiveUser() {
+    public String getActiveUserId() {
         String usernameOfExecutor = getUsernameOfExecutor();
 
         return userRepository
                 .findByUsername(usernameOfExecutor)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"))
+                .getUserId();
     }
 }
