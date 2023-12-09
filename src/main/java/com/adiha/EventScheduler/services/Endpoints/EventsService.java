@@ -30,6 +30,15 @@ public class EventsService extends CrudService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
+    /**
+     * Constructor for the EventsService class.
+     * It initializes the userRepository, eventRepository, and eventMapper.
+     *
+     * @param userRepository  The UserRepository to handle the database operations related to the User entity.
+     * @param userRepository1 The UserRepository to handle the database operations related to the User entity.
+     * @param eventRepository The EventRepository to handle the database operations related to the Event entity.
+     * @param eventMapper     The EventMapper for mapping between Event entities and DTOs.
+     */
     public EventsService(UserRepository userRepository, UserRepository userRepository1, EventRepository eventRepository, EventMapper eventMapper) {
         super(userRepository);
         this.userRepository = userRepository1;
