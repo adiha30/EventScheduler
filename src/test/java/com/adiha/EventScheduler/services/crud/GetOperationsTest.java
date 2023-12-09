@@ -24,7 +24,12 @@ import static org.junit.Assert.assertThrows;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+<<<<<<< Updated upstream
 @TestPropertySource(locations="classpath:application-test.properties")
+=======
+@TestPropertySource(locations= "classpath:application-test.yml")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
+>>>>>>> Stashed changes
 public class GetOperationsTest {
 
     @Autowired

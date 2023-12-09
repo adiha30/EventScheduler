@@ -32,7 +32,12 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+<<<<<<< Updated upstream
 @TestPropertySource(locations = "classpath:application-test.properties")
+=======
+@TestPropertySource(locations = "classpath:application-test.yml")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
+>>>>>>> Stashed changes
 public class PostOperationsTest {
 
     @Autowired
