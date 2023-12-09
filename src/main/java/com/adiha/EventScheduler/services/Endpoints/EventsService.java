@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.services;
+package com.adiha.EventScheduler.services.Endpoints;
 
 import com.adiha.EventScheduler.expections.UserNotAuthorized;
 import com.adiha.EventScheduler.models.Event;
@@ -8,18 +8,12 @@ import com.adiha.EventScheduler.repositories.UserRepository;
 import com.adiha.EventScheduler.specifications.EventByLocation;
 import com.adiha.EventScheduler.specifications.EventByVenue;
 import com.adiha.EventScheduler.utils.mapper.EventMapper;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -29,30 +23,33 @@ import static com.adiha.EventScheduler.utils.Constants.*;
  * Service class for handling operations related to events.
  */
 @Service
-@RequiredArgsConstructor
-public class EventsService {
+public class EventsService extends CrudService {
     private final Logger logger = LoggerFactory.getLogger(EventsService.class);
 
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
+    /**
+     * Constructor for the EventsService class.
+     * It initializes the userRepository, eventRepository, and eventMapper.
+     *
+     * @param userRepository  The UserRepository to handle the database operations related to the User entity.
+     * @param userRepository1 The UserRepository to handle the database operations related to the User entity.
+     * @param eventRepository The EventRepository to handle the database operations related to the Event entity.
+     * @param eventMapper     The EventMapper for mapping between Event entities and DTOs.
+     */
+    public EventsService(UserRepository userRepository, UserRepository userRepository1, EventRepository eventRepository, EventMapper eventMapper) {
+        super(userRepository);
+        this.userRepository = userRepository1;
+        this.eventRepository = eventRepository;
+        this.eventMapper = eventMapper;
+    }
+
     private static Specification<Event> getSpecification(String location, String venue) {
         return Specification
                 .where(new EventByLocation(location))
                 .and(new EventByVenue(venue));
-    }
-
-    private static ResponseStatusException throwNotFoundException(String eventId) {
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                String.format("Event with uuid %s was not found", eventId));
-    }
-
-    private static String getUsernameOfExecutor() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        return authentication.getName();
     }
 
     /**
@@ -244,14 +241,4 @@ public class EventsService {
 
         return eventToUpdate;
     }
-
-    private User getActiveUser() {
-        String usernameOfExecutor = getUsernameOfExecutor();
-
-        return userRepository
-                .findByUsername(usernameOfExecutor)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
-
-
 }

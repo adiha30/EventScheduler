@@ -1,6 +1,6 @@
 package com.adiha.EventScheduler.config;
 
-import com.adiha.EventScheduler.services.JwtService;
+import com.adiha.EventScheduler.services.auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -2,7 +2,7 @@ package com.adiha.EventScheduler.services.crud;
 
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.repositories.EventRepository;
-import com.adiha.EventScheduler.services.EventsService;
+import com.adiha.EventScheduler.services.Endpoints.EventsService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThrows;
 public class GetOperationsTest {
 
     @Autowired
-    private EventsService sut;
+    private EventsService sut; /** System Under Test */
 
     @Autowired
     private EventRepository eventRepository;

@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.services;
+package com.adiha.EventScheduler.services.auth;
 
 import com.adiha.EventScheduler.expections.UserAlreadyExistAuthenticationException;
 import com.adiha.EventScheduler.models.User;

@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.services;
+package com.adiha.EventScheduler.services.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

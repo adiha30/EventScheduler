@@ -1,11 +1,10 @@
-package com.adiha.EventScheduler.services.crud;
+package com.adiha.EventScheduler.services.subscriptions;
 
-import com.adiha.EventScheduler.expections.UserNotAuthorized;
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.repositories.UserRepository;
-import com.adiha.EventScheduler.services.Endpoints.EventsService;
+import com.adiha.EventScheduler.services.Endpoints.SubscriptionService;
 import com.google.common.truth.Truth;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,13 +21,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.adiha.EventScheduler.TestUtils.getSimpleEvent;
 import static com.adiha.EventScheduler.TestUtils.getSimpleUser;
-import static com.google.common.truth.Truth.assertWithMessage;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,10 +34,14 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class DeleteOperationsTest {
+public class SubscriptionOperationsTest {
 
+    public static final String NOT_EXISTING_EVENT_ID = "NOT_EXISTING_EVENT_ID";
     @Autowired
-    private EventsService sut;
+    private SubscriptionService sut;
+    /**
+     * System Under Test
+     */
 
     @Autowired
     private EventRepository eventRepository;
@@ -65,56 +67,59 @@ public class DeleteOperationsTest {
     }
 
     @Test
-    @DisplayName("Test delete valid event")
+    @DisplayName("subscribe() should add the user to the event's subscribers")
     @Transactional
-    void testDeleteValidEvent() {
-        Event event1 = getSimpleEvent();
-        eventRepository.save(event1);
+    void subscribeToAddUserToEventSubscribers() {
+        Event eventToSub = getSimpleEvent();
+        eventRepository.save(eventToSub);
 
-        sut.deleteEvent(event1.getEventId());
+        sut.subscribe(eventToSub.getEventId());
 
-        Truth.assertThat(eventRepository.findById(event1.getEventId()).isPresent()).isFalse();
+        Truth.assertThat(eventRepository.findById(eventToSub.getEventId()).get().getSubscribers())
+                .contains(testUser.getUserId());
     }
 
     @Test
-    @DisplayName("Test delete event with invalid event id")
+    @DisplayName("subscribe() should throw an exception if the event does not exist")
     @Transactional
-    void testDeleteEventWithInvalidEventId() {
+    void subscribeToThrowExceptionIfEventDoesNotExist() {
         Assertions.assertThrows(
-                UserNotAuthorized.class,
-                () -> sut.deleteEvent("1")
-        );
+                ResponseStatusException.class,
+                () -> sut.subscribe(NOT_EXISTING_EVENT_ID));
     }
 
     @Test
-    @DisplayName("Test delete event with null event id")
+    @DisplayName("unsubscribe() should remove the user from the event's subscribers")
     @Transactional
-    void testDeleteEventWithNullEventId() {
+    void unsubscribeToRemoveUserFromEventSubscribers() {
+        Event eventToUnsub = getSimpleEvent();
+        eventToUnsub.addToSubscribers(testUser.getUserId());
+        eventRepository.save(eventToUnsub);
+
+        sut.unsubscribe(eventToUnsub.getEventId());
+
+        Truth.assertThat(eventRepository.findById(eventToUnsub.getEventId()).get().getSubscribers())
+                .doesNotContain(testUser.getUserId());
+    }
+
+    @Test
+    @DisplayName("unsubscribe() should throw an exception if the event does not exist")
+    @Transactional
+    void unsubscribeToThrowExceptionIfEventDoesNotExist() {
+        Assertions.assertThrows(
+                ResponseStatusException.class,
+                () -> sut.unsubscribe(NOT_EXISTING_EVENT_ID));
+    }
+
+    @Test
+    @DisplayName("unsubscribe() should throw an exception if the user is not subscribed to the event")
+    @Transactional
+    void unsubscribeToThrowExceptionIfUserIsNotSubscribedToEvent() {
+        Event eventToUnsub = getSimpleEvent();
+        eventRepository.save(eventToUnsub);
+
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> sut.deleteEvent(null)
-        );
+                () -> sut.unsubscribe(eventToUnsub.getEventId()));
     }
-
-    @Test
-    @DisplayName("Test delete valid events")
-    @Transactional
-    void testDeleteValidEvents() {
-        Event event1 = getSimpleEvent();
-        Event event2 = getSimpleEvent();
-        eventRepository.save(event1);
-        eventRepository.save(event2);
-
-        sut.deleteAll(List.of(event1.getEventId(), event2.getEventId()));
-
-        Assertions.assertAll(
-                () -> assertWithMessage("Event with id " + event1.getEventId() + " was not deleted")
-                        .that(eventRepository.findById(event1.getEventId()).isPresent())
-                        .isFalse(),
-                () -> assertWithMessage("Event with id " + event2.getEventId() + " was not deleted")
-                        .that(eventRepository.findById(event2.getEventId()).isPresent())
-                        .isFalse()
-        );
-    }
-
 }

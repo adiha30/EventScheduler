@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.services;
+package com.adiha.EventScheduler.services.reminders;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -101,4 +101,20 @@ public class Event {
         }
     }
 
+    /**
+     * This method is used to remove a user from the subscribers of the event.
+     * If the subscribers set is not null and contains the user, it removes the user from the subscribers.
+     * If the subscribers set is null or does not contain the user, it throws an IllegalArgumentException.
+     *
+     * @param userId The unique identifier of the user to be removed from the subscribers.
+     * @throws IllegalArgumentException if the user is not subscribed to this event or the event does not exist.
+     */
+    public void removeFromSubscribers(String userId) {
+        if (subscribers != null && subscribers.contains(userId)) {
+            subscribers.remove(userId);
+        } else {
+            throw new IllegalArgumentException("User is not subscribed to this event or event does not exist.");
+        }
+    }
+
 }

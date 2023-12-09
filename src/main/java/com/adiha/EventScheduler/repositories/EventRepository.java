@@ -18,7 +18,7 @@ public interface EventRepository extends JpaRepository<Event, String>, JpaSpecif
      * Finds all events that start between the specified start and end times and for which a reminder has not been sent.
      *
      * @param start The start of the time range within which to find events.
-     * @param end The end of the time range within which to find events.
+     * @param end   The end of the time range within which to find events.
      * @return A list of events that start between the specified start and end times and for which a reminder has not been sent.
      */
     List<Event> findByStartTimeBetweenAndReminderSentIsFalse(LocalDateTime start, LocalDateTime end);
