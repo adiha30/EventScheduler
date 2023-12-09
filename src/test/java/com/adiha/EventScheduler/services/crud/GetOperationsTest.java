@@ -148,8 +148,8 @@ public class GetOperationsTest {
                         .that(allEvents)
                         .containsExactlyElementsIn(insertedEvents),
                 () -> assertWithMessage("Events are not sorted by popularity in ascending order")
-                        .that(allEvents.get(0).getUsers().size())
-                        .isAtMost(allEvents.get(1).getUsers().size())
+                        .that(allEvents.get(0).getSubscribers().size())
+                        .isAtMost(allEvents.get(1).getSubscribers().size())
         );
     }
 
@@ -172,8 +172,8 @@ public class GetOperationsTest {
                         .that(allEvents)
                         .containsExactlyElementsIn(insertedEvents),
                 () -> assertWithMessage("Events are not sorted by popularity in descending order")
-                        .that(allEvents.get(0).getUsers().size())
-                        .isAtLeast(allEvents.get(1).getUsers().size())
+                        .that(allEvents.get(0).getSubscribers().size())
+                        .isAtLeast(allEvents.get(1).getSubscribers().size())
         );
     }
 

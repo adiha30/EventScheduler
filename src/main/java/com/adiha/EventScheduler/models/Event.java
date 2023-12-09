@@ -78,6 +78,10 @@ public class Event {
             name = "event_subscriptions",
             joinColumns = @JoinColumn(name = "event_id"))
     @Column(name = "user_id")
-    private Set<String> users;
+    private Set<String> subscribers;
+
+    public void addToSubscribers(String userId) {
+        subscribers.add(userId);
+    }
 
 }

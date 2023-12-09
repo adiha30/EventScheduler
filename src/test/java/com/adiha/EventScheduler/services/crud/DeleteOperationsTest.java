@@ -1,24 +1,38 @@
 package com.adiha.EventScheduler.services.crud;
 
+import com.adiha.EventScheduler.expections.UserNotAuthorized;
 import com.adiha.EventScheduler.models.Event;
+import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.repositories.EventRepository;
+import com.adiha.EventScheduler.repositories.UserRepository;
 import com.adiha.EventScheduler.services.EventsService;
 import com.google.common.truth.Truth;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.adiha.EventScheduler.TestUtils.getSimpleEvent;
+import static com.adiha.EventScheduler.TestUtils.getSimpleUser;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -30,6 +44,26 @@ public class DeleteOperationsTest {
 
     @Autowired
     private EventRepository eventRepository;
+
+    private User testUser;
+
+    @MockBean
+    private UserRepository userRepository;
+
+    @Mock
+    private Authentication authentication;
+
+    @BeforeEach
+    void authMock() {
+        testUser = getSimpleUser();
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
+    }
 
     @Test
     @DisplayName("Test delete valid event")
@@ -48,7 +82,7 @@ public class DeleteOperationsTest {
     @Transactional
     void testDeleteEventWithInvalidEventId() {
         Assertions.assertThrows(
-                ResponseStatusException.class,
+                UserNotAuthorized.class,
                 () -> sut.deleteEvent("1")
         );
     }
