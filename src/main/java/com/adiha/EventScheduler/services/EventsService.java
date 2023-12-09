@@ -49,6 +49,12 @@ public class EventsService {
                 String.format("Event with uuid %s was not found", eventId));
     }
 
+    private static String getUsernameOfExecutor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication.getName();
+    }
+
     /**
      * Retrieves all events, optionally sorted by a specified field and order.
      *
@@ -244,12 +250,6 @@ public class EventsService {
         return userRepository
                 .findByUsername(usernameOfExecutor)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
-
-    private static String getUsernameOfExecutor() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        return authentication.getName();
     }
 
 

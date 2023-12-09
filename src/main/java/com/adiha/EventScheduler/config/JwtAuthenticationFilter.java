@@ -21,10 +21,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    public static final int AFTER_BEARER = 7;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-
-    public static final int AFTER_BEARER = 7;
 
     @Override
     protected void doFilterInternal(

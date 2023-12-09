@@ -21,10 +21,9 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
+    public static final int JWT_EXPIRATION = 1000 * 60 * 60;
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
-
-    public static final int JWT_EXPIRATION = 1000 * 60 * 60;
 
     /**
      * Extracts the username from the JWT.
