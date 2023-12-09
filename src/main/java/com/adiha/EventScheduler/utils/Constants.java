@@ -11,4 +11,7 @@ public class Constants {
 
     public static final String ASCENDING = "ASC";
     public static final String DESCENDING = "DESC";
+
+    public static final String TOPIC_EVENTS = "/topic/events/";
+    public static final String EVENTS_UPDATES_TOPIC = "/updates";
 }

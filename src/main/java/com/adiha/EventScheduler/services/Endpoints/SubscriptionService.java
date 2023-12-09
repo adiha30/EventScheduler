@@ -43,7 +43,7 @@ public class SubscriptionService extends CrudService {
 
         Event eventToSub = eventRepository.findById(eventId)
                 .orElseThrow(() -> throwNotFoundException(eventId));
-        eventToSub.addToSubscribers(getActiveUser().getUserId());
+        eventToSub.addToSubscribers(getActiveUserId());
 
         eventRepository.save(eventToSub);
     }
@@ -62,7 +62,7 @@ public class SubscriptionService extends CrudService {
         Event eventToSub = eventRepository.findById(eventId)
                 .orElseThrow(() -> throwNotFoundException(eventId));
 
-        eventToSub.removeFromSubscribers(getActiveUser().getUserId());
+        eventToSub.removeFromSubscribers(getActiveUserId());
 
         eventRepository.save(eventToSub);
     }

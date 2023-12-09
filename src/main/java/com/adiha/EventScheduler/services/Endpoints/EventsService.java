@@ -3,6 +3,8 @@ package com.adiha.EventScheduler.services.Endpoints;
 import com.adiha.EventScheduler.expections.UserNotAuthorized;
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.models.User;
+import com.adiha.EventScheduler.models.enums.UpdateType;
+import com.adiha.EventScheduler.models.websocket.EventUpdate;
 import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.repositories.UserRepository;
 import com.adiha.EventScheduler.specifications.EventByLocation;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +29,7 @@ import static com.adiha.EventScheduler.utils.Constants.*;
 public class EventsService extends CrudService {
     private final Logger logger = LoggerFactory.getLogger(EventsService.class);
 
-    private final UserRepository userRepository;
+    private final SimpMessagingTemplate messagingTemplate;
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
@@ -39,9 +42,9 @@ public class EventsService extends CrudService {
      * @param eventRepository The EventRepository to handle the database operations related to the Event entity.
      * @param eventMapper     The EventMapper for mapping between Event entities and DTOs.
      */
-    public EventsService(UserRepository userRepository, UserRepository userRepository1, EventRepository eventRepository, EventMapper eventMapper) {
+    public EventsService(UserRepository userRepository, UserRepository userRepository1, SimpMessagingTemplate simpMessagingTemplate, EventRepository eventRepository, EventMapper eventMapper) {
         super(userRepository);
-        this.userRepository = userRepository1;
+        this.messagingTemplate = simpMessagingTemplate;
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
     }
@@ -150,7 +153,7 @@ public class EventsService extends CrudService {
     }
 
     /**
-     * Updates an existing event.
+     * Updates an existing event and sends updates via websockets to all subscribers of it.
      *
      * @param eventId the ID of the event to update
      * @param event   the new event data
@@ -162,12 +165,15 @@ public class EventsService extends CrudService {
         Event updatedEvent = eventRepository.findById(eventId)
                 .map((Event eventToUpdate) -> updateEvent(event, eventToUpdate))
                 .orElseThrow(() -> throwNotFoundException(eventId));
+        Event savedEvent = eventRepository.save(updatedEvent);
 
-        return eventRepository.save(updatedEvent);
+        sendEventUpdate(savedEvent, UpdateType.UPDATED);
+
+        return savedEvent;
     }
 
     /**
-     * Deletes an event by its ID.
+     * Deletes an event by its ID and sends updates via websockets to all subscribers of it.
      *
      * @param eventId the ID of the event to delete
      */
@@ -177,7 +183,12 @@ public class EventsService extends CrudService {
         if (eventId == null) {
             throw new IllegalArgumentException("Event id cannot be null");
         } else if (isAuthorizedToDelete(eventId)) {
+            var eventToDelete = eventRepository.findById(eventId).orElseThrow(() -> throwNotFoundException(eventId));
+
             eventRepository.deleteById(eventId);
+
+            sendEventUpdate(eventToDelete, UpdateType.CANCELED);
+
             return;
         }
 
@@ -189,11 +200,11 @@ public class EventsService extends CrudService {
         boolean isPresent = eventRepository.findById(eventId).isPresent();
 
         return isPresent &&
-                getActiveUser().getUserId().equals(eventRepository.findById(eventId).get().getCreatingUserId());
+                getActiveUserId().equals(eventRepository.findById(eventId).get().getCreatingUserId());
     }
 
     /**
-     * Deletes multiple events by their IDs.
+     * Deletes multiple events by their IDs and sends updates via websockets to all subscribers of them.
      *
      * @param eventIds the IDs of the events to delete
      */
@@ -201,14 +212,38 @@ public class EventsService extends CrudService {
         logger.debug("Deleting events with ids: {}", eventIds);
 
         List<Event> eventsToDelete = eventRepository.findAllById(eventIds);
+        eventsToDelete.forEach((Event event) -> sendEventUpdate(event, UpdateType.CANCELED));
 
         eventRepository.deleteAll(eventsToDelete);
     }
 
+    private void sendEventUpdate(Event event, UpdateType updateType) {
+        if (event != null) {
+            String destinationTopic = getDestinationTopic(event);
+            logger.info("Sending {} update for {} in topic {}",
+                    updateType.getValue(),
+                    event.getName(),
+                    destinationTopic
+            );
+
+            var eventUpdate = EventUpdate.builder()
+                    .event(event)
+                    .updateType(updateType)
+                    .build();
+
+            messagingTemplate.convertAndSend(destinationTopic, eventUpdate);
+        }
+    }
+
+    private static String getDestinationTopic(Event event) {
+        return TOPIC_EVENTS + event.getEventId() + EVENTS_UPDATES_TOPIC;
+    }
+
     private void setCreatingUserAndSubscribers(Event event) {
-        User creatingUser = getActiveUser();
-        event.setCreatingUserId(creatingUser.getUserId());
-        event.addToSubscribers(creatingUser.getUserId());
+        String creatingUserId = getActiveUserId();
+
+        event.setCreatingUserId(creatingUserId);
+        event.addToSubscribers(creatingUserId);
     }
 
     private List<Event> getEventSortedBy(String order) {
@@ -232,7 +267,7 @@ public class EventsService extends CrudService {
     }
 
     private Event updateEvent(Event event, Event eventToUpdate) {
-        if (!getActiveUser().getUserId().equals(event.getCreatingUserId())) {
+        if (!getActiveUserId().equals(event.getCreatingUserId())) {
             throw new UserNotAuthorized("User is not authorized to update this event");
         }
 

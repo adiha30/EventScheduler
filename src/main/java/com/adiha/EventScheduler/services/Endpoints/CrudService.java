@@ -52,11 +52,12 @@ public abstract class CrudService {
      * @return The User entity of the currently authenticated user.
      * @throws UsernameNotFoundException if the User entity is not found.
      */
-    public User getActiveUser() {
+    public String getActiveUserId() {
         String usernameOfExecutor = getUsernameOfExecutor();
 
         return userRepository
                 .findByUsername(usernameOfExecutor)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"))
+                .getUserId();
     }
 }
