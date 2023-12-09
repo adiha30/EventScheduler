@@ -87,6 +87,11 @@ public class Event {
     @Column(name = "user_id")
     private Set<String> subscribers;
 
+    /**
+     * Adds a user to the subscribers of the event.
+     *
+     * @param userId The unique identifier of the user to be added to the subscribers.
+     */
     public void addToSubscribers(String userId) {
         if (subscribers == null) {
             subscribers = new HashSet<>();
