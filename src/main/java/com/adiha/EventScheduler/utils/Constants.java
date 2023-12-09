@@ -16,6 +16,8 @@ public class Constants {
 
     // Websocket
     public static final String WEB_SOCKET_ENDPOINT = "ws";
-    public static final String TOPIC_EVENTS = "/topic/events/";
+    public static final String WEBSOCKET_PREFIX = "/app";
+    public static final String TOPICS_DEST_PREFIX = "/topic";
+    public static final String EVENTS_TOPIC = "/events/";
     public static final String EVENTS_UPDATES_TOPIC = "/updates";
 }

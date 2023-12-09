@@ -2,7 +2,6 @@ package com.adiha.EventScheduler.services.Endpoints;
 
 import com.adiha.EventScheduler.expections.UserNotAuthorized;
 import com.adiha.EventScheduler.models.Event;
-import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.models.enums.UpdateType;
 import com.adiha.EventScheduler.models.websocket.EventUpdate;
 import com.adiha.EventScheduler.repositories.EventRepository;
@@ -236,7 +235,7 @@ public class EventsService extends CrudService {
     }
 
     private static String getDestinationTopic(Event event) {
-        return TOPIC_EVENTS + event.getEventId() + EVENTS_UPDATES_TOPIC;
+        return TOPICS_DEST_PREFIX + EVENTS_TOPIC + event.getEventId() + EVENTS_UPDATES_TOPIC;
     }
 
     private void setCreatingUserAndSubscribers(Event event) {

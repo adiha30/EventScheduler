@@ -6,7 +6,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-import static com.adiha.EventScheduler.utils.Constants.WEB_SOCKET_ENDPOINT;
+import static com.adiha.EventScheduler.utils.Constants.*;
 
 /**
  * This class is a configuration class for WebSocket communication.
@@ -16,8 +16,6 @@ import static com.adiha.EventScheduler.utils.Constants.WEB_SOCKET_ENDPOINT;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
-
-
 
     /**
      * This method is used to register STOMP endpoints.
@@ -38,6 +36,6 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app").enableSimpleBroker("/topic");
+        registry.setApplicationDestinationPrefixes(WEBSOCKET_PREFIX).enableSimpleBroker(TOPICS_DEST_PREFIX);
     }
 }
