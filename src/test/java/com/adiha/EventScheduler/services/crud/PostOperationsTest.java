@@ -4,7 +4,7 @@ import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.repositories.UserRepository;
-import com.adiha.EventScheduler.services.EventsService;
+import com.adiha.EventScheduler.services.Endpoints.EventsService;
 
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
@@ -16,7 +16,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;

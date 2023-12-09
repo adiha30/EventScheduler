@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.services;
+package com.adiha.EventScheduler.services.reminders;
 
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.repositories.EventRepository;

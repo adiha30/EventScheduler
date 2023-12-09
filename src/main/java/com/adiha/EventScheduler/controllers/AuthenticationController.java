@@ -3,7 +3,7 @@ package com.adiha.EventScheduler.controllers;
 import com.adiha.EventScheduler.models.auth.AuthenticationRequest;
 import com.adiha.EventScheduler.models.auth.AuthenticationResponse;
 import com.adiha.EventScheduler.models.auth.RegisterRequest;
-import com.adiha.EventScheduler.services.AuthenticationService;
+import com.adiha.EventScheduler.services.auth.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

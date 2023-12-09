@@ -101,4 +101,12 @@ public class Event {
         }
     }
 
+    public void removeFromSubscribers(String userId) {
+        if (subscribers != null && subscribers.contains(userId)) {
+            subscribers.remove(userId);
+        } else {
+            throw new IllegalArgumentException("User is not subscribed to this event or event does not exist.");
+        }
+    }
+
 }

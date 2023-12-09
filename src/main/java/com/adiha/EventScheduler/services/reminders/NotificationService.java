@@ -1,6 +1,7 @@
-package com.adiha.EventScheduler.services;
+package com.adiha.EventScheduler.services.reminders;
 
 import com.adiha.EventScheduler.models.Event;
+import com.adiha.EventScheduler.services.Endpoints.EventsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
