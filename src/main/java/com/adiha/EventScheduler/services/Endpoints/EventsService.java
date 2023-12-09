@@ -8,21 +8,12 @@ import com.adiha.EventScheduler.repositories.UserRepository;
 import com.adiha.EventScheduler.specifications.EventByLocation;
 import com.adiha.EventScheduler.specifications.EventByVenue;
 import com.adiha.EventScheduler.utils.mapper.EventMapper;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -32,7 +23,7 @@ import static com.adiha.EventScheduler.utils.Constants.*;
  * Service class for handling operations related to events.
  */
 @Service
-public class EventsService extends CrudService{
+public class EventsService extends CrudService {
     private final Logger logger = LoggerFactory.getLogger(EventsService.class);
 
     private final UserRepository userRepository;

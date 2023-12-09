@@ -3,15 +3,9 @@ package com.adiha.EventScheduler.services.Endpoints;
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.repositories.UserRepository;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import static com.adiha.EventScheduler.services.Endpoints.EventsService.throwNotFoundException;
 
 @Service
 public class SubscriptionService extends CrudService {
