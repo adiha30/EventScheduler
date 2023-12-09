@@ -240,6 +240,7 @@ public class EventsService {
         }
 
         eventMapper.updateEventFromDto(event, eventToUpdate);
+        eventToUpdate.setReminderSent(false);
 
         return eventToUpdate;
     }

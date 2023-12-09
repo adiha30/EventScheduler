@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -12,6 +14,8 @@ import java.util.List;
  * This interface is used for CRUD operations and custom queries on the Event entity.
  */
 public interface EventRepository extends JpaRepository<Event, String>, JpaSpecificationExecutor<Event> {
+
+    List<Event> findByStartTimeBetweenAndReminderSentIsFalse(LocalDateTime start, LocalDateTime end);
 
     /**
      * Custom query to find all events ordered by popularity in descending order.

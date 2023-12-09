@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -71,6 +72,12 @@ public class Event {
     private String venue;
 
     /**
+     * The reminderSent field of the event.
+     * This field represents whether a reminder has been sent for the event.
+     */
+    private boolean reminderSent;
+
+    /**
      * The set of user ids of the users who are subscribed to the event.
      */
     @ElementCollection
@@ -81,7 +88,12 @@ public class Event {
     private Set<String> subscribers;
 
     public void addToSubscribers(String userId) {
-        subscribers.add(userId);
+        if (subscribers == null) {
+            subscribers = new HashSet<>();
+            subscribers.add(userId);
+        } else {
+            subscribers.add(userId);
+        }
     }
 
 }
