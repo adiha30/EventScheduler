@@ -1,16 +1,23 @@
 package com.adiha.EventScheduler.services;
 
+import com.adiha.EventScheduler.expections.UserNotAuthorized;
 import com.adiha.EventScheduler.models.Event;
+import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.repositories.EventRepository;
+import com.adiha.EventScheduler.repositories.UserRepository;
 import com.adiha.EventScheduler.specifications.EventByLocation;
 import com.adiha.EventScheduler.specifications.EventByVenue;
 import com.adiha.EventScheduler.utils.mapper.EventMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,6 +33,7 @@ import static com.adiha.EventScheduler.utils.Constants.*;
 public class EventsService {
     private final Logger logger = LoggerFactory.getLogger(EventsService.class);
 
+    private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
@@ -39,6 +47,12 @@ public class EventsService {
         throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 String.format("Event with uuid %s was not found", eventId));
+    }
+
+    private static String getUsernameOfExecutor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication.getName();
     }
 
     /**
@@ -106,7 +120,14 @@ public class EventsService {
      * @return the created event
      */
     public Event createEvent(Event event) {
+        if (event == null) {
+            logger.error("Event inserted was null");
+            throw new InvalidDataAccessApiUsageException("Event cannot be null");
+        }
+
         logger.debug("Creating event: {}", event);
+
+        setCreatingUserAndSubscribers(event);
 
         return eventRepository.save(event);
     }
@@ -118,6 +139,16 @@ public class EventsService {
      * @return the created events
      */
     public List<Event> createAll(List<Event> events) {
+        if (events == null) {
+            logger.error("Events inserted were null");
+
+            throw new InvalidDataAccessApiUsageException("Event cannot be null");
+        }
+
+        logger.debug("Creating events: {}", events);
+
+        events.forEach(this::setCreatingUserAndSubscribers);
+
         return eventRepository.saveAll(events);
     }
 
@@ -148,12 +179,20 @@ public class EventsService {
 
         if (eventId == null) {
             throw new IllegalArgumentException("Event id cannot be null");
-        } else if (eventRepository.findById(eventId).isPresent()) {
+        } else if (isAuthorizedToDelete(eventId)) {
             eventRepository.deleteById(eventId);
             return;
         }
 
-        throwNotFoundException(eventId);
+        throw new UserNotAuthorized(
+                String.format("Event not found or user is not authorized to delete event %s", eventId));
+    }
+
+    private boolean isAuthorizedToDelete(String eventId) {
+        boolean isPresent = eventRepository.findById(eventId).isPresent();
+
+        return isPresent &&
+                getActiveUser().getUserId().equals(eventRepository.findById(eventId).get().getCreatingUserId());
     }
 
     /**
@@ -167,6 +206,12 @@ public class EventsService {
         List<Event> eventsToDelete = eventRepository.findAllById(eventIds);
 
         eventRepository.deleteAll(eventsToDelete);
+    }
+
+    private void setCreatingUserAndSubscribers(Event event) {
+        User creatingUser = getActiveUser();
+        event.setCreatingUserId(creatingUser.getUserId());
+        event.addToSubscribers(creatingUser.getUserId());
     }
 
     private List<Event> getEventSortedBy(String order) {
@@ -190,8 +235,22 @@ public class EventsService {
     }
 
     private Event updateEvent(Event event, Event eventToUpdate) {
+        if (!getActiveUser().getUserId().equals(event.getCreatingUserId())) {
+            throw new UserNotAuthorized("User is not authorized to update this event");
+        }
+
         eventMapper.updateEventFromDto(event, eventToUpdate);
 
         return eventToUpdate;
     }
+
+    private User getActiveUser() {
+        String usernameOfExecutor = getUsernameOfExecutor();
+
+        return userRepository
+                .findByUsername(usernameOfExecutor)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+
 }

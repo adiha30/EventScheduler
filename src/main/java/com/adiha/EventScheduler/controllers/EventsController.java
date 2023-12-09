@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.adiha.EventScheduler.utils.Constants.CREATION_TIME;
 
@@ -118,7 +119,7 @@ public class EventsController {
                 updatedEvents.add(eventsService.updateEvent(event.getEventId(), event))
         );
 
-        return updatedEvents;
+        return updatedEvents.stream().filter(Objects::nonNull).toList();
     }
 
     /**

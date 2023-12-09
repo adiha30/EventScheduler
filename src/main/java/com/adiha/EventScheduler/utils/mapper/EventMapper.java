@@ -15,7 +15,7 @@ public interface EventMapper {
 
     /**
      * Updates an existing Event entity with values from an Event DTO.
-     * The eventId field is ignored during the mapping process.
+     * The eventId field is ignored during the mapping process - Since it is generated automatically.
      *
      * @param dto    the Event DTO to map from
      * @param entity the Event entity to update
