@@ -6,6 +6,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import static com.adiha.EventScheduler.utils.Constants.WEB_SOCKET_ENDPOINT;
+
 /**
  * This class is a configuration class for WebSocket communication.
  * It implements the WebSocketMessageBrokerConfigurer interface to provide WebSocket configuration.
@@ -15,6 +17,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
 
+
+
     /**
      * This method is used to register STOMP endpoints.
      * It adds a STOMP endpoint at the "/ws" URL path and enables SockJS fallback options.
@@ -23,7 +27,7 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("ws").withSockJS();
+        registry.addEndpoint(WEB_SOCKET_ENDPOINT).withSockJS();
     }
 
     /**
