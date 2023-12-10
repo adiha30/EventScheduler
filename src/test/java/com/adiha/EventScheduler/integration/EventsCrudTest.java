@@ -26,8 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.adiha.EventScheduler.integration.TestUtils.createSampleEvent;
-import static com.adiha.EventScheduler.integration.TestUtils.getSimpleUser;
+import static com.adiha.EventScheduler.integration.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,7 +42,7 @@ class EventsCrudTest {
 
     public static final String TEST_USER = "test-user";
     @Container
-    private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16-alpine")
+    private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(POSTGRES_IMAGE)
             .withDatabaseName("integration-tests-db")
             .withUsername("sa")
             .withPassword("sa");

@@ -12,6 +12,7 @@ public class TestUtils {
     public static final String TEST_USER = "testUser";
     public static final String TEST_PASSWORD = "testPassword";
     public static final String TEST_UUID = "12345678-1234-1234-1234-123456789012";
+    public static final String POSTGRES_IMAGE = "postgres:16-alpine";
 
     public static Event createSampleEvent(String eventName, String creatingUserId) {
         LocalDateTime startTime = LocalDateTime.now();
@@ -30,6 +31,15 @@ public class TestUtils {
                 .userId(TEST_UUID)
                 .username(TEST_USER)
                 .password(TEST_PASSWORD)
+                .role(USER)
+                .build();
+    }
+
+    public static User getSimpleUser(String username, String password) {
+        return User.builder()
+                .userId(TEST_UUID)
+                .username(username)
+                .password(password)
                 .role(USER)
                 .build();
     }
