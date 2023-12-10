@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.services.crud;
+package com.adiha.EventScheduler.unit.services.crud;
 
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.repositories.EventRepository;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import static com.adiha.EventScheduler.TestUtils.*;
+import static com.adiha.EventScheduler.unit.TestUtils.*;
 import static com.adiha.EventScheduler.utils.Constants.*;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;

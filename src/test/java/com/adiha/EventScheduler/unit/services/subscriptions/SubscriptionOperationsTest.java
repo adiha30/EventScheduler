@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.services.subscriptions;
+package com.adiha.EventScheduler.unit.services.subscriptions;
 
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.models.User;
@@ -26,8 +26,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static com.adiha.EventScheduler.TestUtils.getSimpleEvent;
-import static com.adiha.EventScheduler.TestUtils.getSimpleUser;
+import static com.adiha.EventScheduler.unit.TestUtils.getSimpleEvent;
+import static com.adiha.EventScheduler.unit.TestUtils.getSimpleUser;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

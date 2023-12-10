@@ -1,19 +1,22 @@
-package com.adiha.EventScheduler.services.crud;
+package com.adiha.EventScheduler.unit.services.crud;
 
+import com.adiha.EventScheduler.expections.UserNotAuthorized;
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.repositories.UserRepository;
 import com.adiha.EventScheduler.services.Endpoints.EventsService;
-
-import org.junit.jupiter.api.*;
+import com.google.common.truth.Truth;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,8 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.adiha.EventScheduler.TestUtils.getSimpleEvent;
-import static com.adiha.EventScheduler.TestUtils.getSimpleUser;
+import static com.adiha.EventScheduler.unit.TestUtils.getSimpleEvent;
+import static com.adiha.EventScheduler.unit.TestUtils.getSimpleUser;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -35,7 +38,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @TestPropertySource(locations = "classpath:application-test.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
-public class PostOperationsTest {
+public class DeleteOperationsTest {
 
     @Autowired
     private EventsService sut;
@@ -64,59 +67,55 @@ public class PostOperationsTest {
     }
 
     @Test
-    @DisplayName("Test create event")
+    @DisplayName("Test delete valid event")
     @Transactional
-    void testCreateEvent() {
+    void testDeleteValidEvent() {
         Event event1 = getSimpleEvent();
-        Event createdEvent = sut.createEvent(event1);
+        eventRepository.save(event1);
 
-        Assertions.assertAll(
-                () -> assertWithMessage("Created event is null")
-                        .that(createdEvent)
-                        .isNotNull(),
-                () -> assertWithMessage("Event was not inserted")
-                        .that(eventRepository.findById(createdEvent.getEventId()).get())
-                        .isEqualTo(event1)
-        );
+        sut.deleteEvent(event1.getEventId());
+
+        Truth.assertThat(eventRepository.findById(event1.getEventId()).isPresent()).isFalse();
     }
 
     @Test
-    @DisplayName("Test create event with null event")
+    @DisplayName("Test delete event with invalid event id")
     @Transactional
-    void testCreateEventWithNullEvent() {
+    void testDeleteEventWithInvalidEventId() {
         Assertions.assertThrows(
-                InvalidDataAccessApiUsageException.class,
-                () -> sut.createEvent(null)
+                UserNotAuthorized.class,
+                () -> sut.deleteEvent("1")
         );
     }
 
     @Test
-    @DisplayName("Test create multiple events")
+    @DisplayName("Test delete event with null event id")
     @Transactional
-    void testCreateMultipleEvents() {
+    void testDeleteEventWithNullEventId() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> sut.deleteEvent(null)
+        );
+    }
+
+    @Test
+    @DisplayName("Test delete valid events")
+    @Transactional
+    void testDeleteValidEvents() {
         Event event1 = getSimpleEvent();
         Event event2 = getSimpleEvent();
-        List<Event> eventsToInsert = List.of(event1, event2);
+        eventRepository.save(event1);
+        eventRepository.save(event2);
 
-        List<Event> eventsInserted = sut.createAll(eventsToInsert);
+        sut.deleteAll(List.of(event1.getEventId(), event2.getEventId()));
 
         Assertions.assertAll(
-                () -> assertWithMessage("Created events are null")
-                        .that(eventsInserted)
-                        .isNotNull(),
-                () -> assertWithMessage("Events were not inserted")
-                        .that(eventRepository.findAll())
-                        .containsExactlyElementsIn(eventsToInsert)
-        );
-    }
-
-    @Test
-    @DisplayName("Test create multiple events with null events")
-    @Transactional
-    void testCreateMultipleEventsWithNullEvents() {
-        Assertions.assertThrows(
-                InvalidDataAccessApiUsageException.class,
-                () -> sut.createAll(null)
+                () -> assertWithMessage("Event with id " + event1.getEventId() + " was not deleted")
+                        .that(eventRepository.findById(event1.getEventId()).isPresent())
+                        .isFalse(),
+                () -> assertWithMessage("Event with id " + event2.getEventId() + " was not deleted")
+                        .that(eventRepository.findById(event2.getEventId()).isPresent())
+                        .isFalse()
         );
     }
 

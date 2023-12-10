@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler;
+package com.adiha.EventScheduler.unit;
 
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.models.User;
