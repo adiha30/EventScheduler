@@ -4,10 +4,8 @@ import com.adiha.EventScheduler.services.Endpoints.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * This class is a Rest Controller for handling subscription related requests.
@@ -28,8 +26,12 @@ public class SubscriptionController {
      */
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/subscribe/{eventId}")
-    public void subscribe(@Validated String eventId) {
-        subscriptionService.subscribe(eventId);
+    public void subscribe(@Validated @PathVariable String eventId) {
+        try {
+            subscriptionService.subscribe(eventId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to subscribe to event " + eventId, e);
+        }
     }
 
     /**
@@ -40,7 +42,11 @@ public class SubscriptionController {
      */
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/unsubscribe/{eventId}")
-    public void unsubscribe(@Validated String eventId) {
-        subscriptionService.unsubscribe(eventId);
+    public void unsubscribe(@Validated @PathVariable String eventId) {
+        try {
+            subscriptionService.unsubscribe(eventId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to unsubscribe from event " + eventId, e);
+        }
     }
 }
