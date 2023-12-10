@@ -6,7 +6,6 @@ import com.adiha.EventScheduler.models.User;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import static com.adiha.EventScheduler.models.enums.Role.USER;
 

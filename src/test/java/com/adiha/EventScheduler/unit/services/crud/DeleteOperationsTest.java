@@ -1,6 +1,5 @@
 package com.adiha.EventScheduler.unit.services.crud;
 
-import com.adiha.EventScheduler.expections.UserNotAuthorized;
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.repositories.EventRepository;
@@ -23,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -83,7 +83,7 @@ public class DeleteOperationsTest {
     @Transactional
     void testDeleteEventWithInvalidEventId() {
         Assertions.assertThrows(
-                UserNotAuthorized.class,
+                ResponseStatusException.class,
                 () -> sut.deleteEvent("1")
         );
     }

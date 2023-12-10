@@ -4,8 +4,10 @@ import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.services.Endpoints.EventsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +33,13 @@ public class EventsController {
      */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/events")
-    public List<Event> getAllEvents(@RequestParam(value = "sort", required = false, defaultValue = CREATION_TIME) String sort,
-                                    @RequestParam(value = "direction", required = false, defaultValue = "ASC") String order) {
-        return eventsService.getAll(sort, order);
+    public ResponseEntity<List<Event>> getAllEvents(@RequestParam(value = "sort", required = false, defaultValue = CREATION_TIME) String sort,
+                                                    @RequestParam(value = "direction", required = false, defaultValue = "ASC") String order) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(eventsService.getAll(sort, order));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -44,8 +50,12 @@ public class EventsController {
      */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/events/{eventId}")
-    public Event getEventById(@PathVariable(value = "eventId") String eventId) {
-        return eventsService.getEventById(eventId);
+    public ResponseEntity<Event> getEventById(@PathVariable(value = "eventId") String eventId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(eventsService.getEventById(eventId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -59,12 +69,16 @@ public class EventsController {
      */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/events/filter")
-    public List<Event> getEventsByLocationAndVenue(
+    public ResponseEntity<List<Event>> getEventsByLocationAndVenue(
             @RequestParam(value = "location", required = false) String location,
             @RequestParam(value = "venue", required = false) String venue,
             @RequestParam(value = "sort", required = false, defaultValue = CREATION_TIME) String sort,
             @RequestParam(value = "direction", required = false, defaultValue = "ASC") String order) {
-        return eventsService.getEventsByLocationAndVenue(location, venue, sort, order);
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(eventsService.getEventsByLocationAndVenue(location, venue, sort, order));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -75,8 +89,12 @@ public class EventsController {
      */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
-    public Event createEvent(@Validated @RequestBody Event event) {
-        return eventsService.createEvent(event);
+    public ResponseEntity<Event> createEvent(@Validated @RequestBody Event event) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(eventsService.createEvent(event));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -87,8 +105,12 @@ public class EventsController {
      */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events/multiple")
-    public List<Event> createEvents(@Validated @RequestBody List<Event> events) {
-        return eventsService.createAll(events);
+    public ResponseEntity<List<Event>> createEvents(@Validated @RequestBody List<Event> events) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(eventsService.createAll(events));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -100,8 +122,12 @@ public class EventsController {
      */
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/events/{eventId}")
-    public Event updateEvent(@PathVariable(value = "eventId") String eventId, @Validated @RequestBody Event event) {
-        return eventsService.updateEvent(eventId, event);
+    public ResponseEntity<Event> updateEvent(@PathVariable(value = "eventId") String eventId, @Validated @RequestBody Event event) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(eventsService.updateEvent(eventId, event));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to update event", e);
+        }
     }
 
     /**
@@ -112,14 +138,19 @@ public class EventsController {
      */
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/events/multiple")
-    public List<Event> updateEvents(@Validated @RequestBody List<Event> events) {
-        List<Event> updatedEvents = new ArrayList<>();
+    public ResponseEntity<List<Event>> updateEvents(@Validated @RequestBody List<Event> events) {
+        try {
+            List<Event> updatedEvents = new ArrayList<>();
 
-        events.forEach((Event event) ->
-                updatedEvents.add(eventsService.updateEvent(event.getEventId(), event))
-        );
+            events.forEach((Event event) ->
+                    updatedEvents.add(eventsService.updateEvent(event.getEventId(), event))
+            );
 
-        return updatedEvents.stream().filter(Objects::nonNull).toList();
+            return ResponseEntity.status(HttpStatus.OK).body(updatedEvents.stream().filter(Objects::nonNull).toList());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to update event", e);
+        }
+
     }
 
     /**
@@ -130,7 +161,11 @@ public class EventsController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/events/{eventId}")
     public void deleteEvent(@PathVariable(value = "eventId") String eventId) {
-        eventsService.deleteEvent(eventId);
+        try {
+            eventsService.deleteEvent(eventId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to delete event", e);
+        }
     }
 
     /**
@@ -141,6 +176,10 @@ public class EventsController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/events/multiple")
     public void deleteEvents(@RequestParam(value = "eventIds") List<String> eventIds) {
-        eventsService.deleteAll(eventIds);
+        try {
+            eventsService.deleteAll(eventIds);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to delete events", e);
+        }
     }
 }

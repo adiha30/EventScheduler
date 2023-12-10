@@ -25,12 +25,15 @@ import static org.junit.Assert.assertThrows;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@TestPropertySource(locations= "classpath:application-test.yml")
+@TestPropertySource(locations = "classpath:application-test.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
 public class GetOperationsTest {
 
     @Autowired
-    private EventsService sut; /** System Under Test */
+    private EventsService sut;
+    /**
+     * System Under Test
+     */
 
     @Autowired
     private EventRepository eventRepository;
