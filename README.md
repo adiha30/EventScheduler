@@ -88,15 +88,14 @@ The following endpoints do not require authentication:
 
 Note that the request and response formats depend on the `Event` and `User` entities. The `Event` entity has the following fields: `eventId`, `name`, `creationTime`, `startTime`, `endTime`, `creatingUserId`, `location`, `venue`, `users`. The `User` entity has the following fields: `userId`, `username`, `password`, `role`.
 
-## Error Handling
-
-Proper error handling is essential for a smooth experience. Be aware of the potential errors users might encounter and the corresponding HTTP status codes and error responses.
-
 ## Execution
 
 To execute this project, navigate to the project's directory and execute the following commands:
 
 ```bash
+#Be sure to login to docker
+docker login
+
 # Run gradle wrapper
 gradle wrapper
 
