@@ -4,7 +4,7 @@ import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.repositories.UserRepository;
-import com.adiha.EventScheduler.services.Endpoints.EventsService;
+import com.adiha.EventScheduler.services.endpoints.EventsService;
 import com.google.common.truth.Truth;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,7 +1,7 @@
 package com.adiha.EventScheduler.controllers;
 
 import com.adiha.EventScheduler.models.Event;
-import com.adiha.EventScheduler.services.Endpoints.EventsService;
+import com.adiha.EventScheduler.services.endpoints.EventsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

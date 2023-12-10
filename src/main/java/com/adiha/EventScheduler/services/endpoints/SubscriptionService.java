@@ -1,4 +1,4 @@
-package com.adiha.EventScheduler.services.Endpoints;
+package com.adiha.EventScheduler.services.endpoints;
 
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.repositories.EventRepository;
