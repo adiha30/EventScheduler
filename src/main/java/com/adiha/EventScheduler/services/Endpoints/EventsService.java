@@ -8,7 +8,6 @@ import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.repositories.UserRepository;
 import com.adiha.EventScheduler.specifications.EventByLocation;
 import com.adiha.EventScheduler.specifications.EventByVenue;
-import com.adiha.EventScheduler.utils.mapper.EventMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -30,28 +29,28 @@ public class EventsService extends CrudService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final EventRepository eventRepository;
-    private final EventMapper eventMapper;
 
     /**
      * Constructor for the EventsService class.
      * It initializes the userRepository, eventRepository, and eventMapper.
      *
      * @param userRepository  The UserRepository to handle the database operations related to the User entity.
-     * @param userRepository1 The UserRepository to handle the database operations related to the User entity.
      * @param eventRepository The EventRepository to handle the database operations related to the Event entity.
-     * @param eventMapper     The EventMapper for mapping between Event entities and DTOs.
      */
-    public EventsService(UserRepository userRepository, UserRepository userRepository1, SimpMessagingTemplate simpMessagingTemplate, EventRepository eventRepository, EventMapper eventMapper) {
+    public EventsService(UserRepository userRepository, SimpMessagingTemplate simpMessagingTemplate, EventRepository eventRepository) {
         super(userRepository);
         this.messagingTemplate = simpMessagingTemplate;
         this.eventRepository = eventRepository;
-        this.eventMapper = eventMapper;
     }
 
     private static Specification<Event> getSpecification(String location, String venue) {
         return Specification
                 .where(new EventByLocation(location))
                 .and(new EventByVenue(venue));
+    }
+
+    private static String getDestinationTopic(Event event) {
+        return TOPICS_DEST_PREFIX + EVENTS_TOPIC + event.getEventId() + EVENTS_UPDATES_TOPIC;
     }
 
     /**
@@ -154,17 +153,17 @@ public class EventsService extends CrudService {
     /**
      * Updates an existing event and sends updates via websockets to all subscribers of it.
      *
-     * @param eventId the ID of the event to update
-     * @param event   the new event data
+     * @param eventId      the ID of the event to update
+     * @param updatedEvent the new event data
      * @return the updated event
      */
-    public Event updateEvent(String eventId, Event event) {
+    public Event updateEvent(String eventId, Event updatedEvent) {
         logger.debug("Updating event with id: {}", eventId);
 
-        Event updatedEvent = eventRepository.findById(eventId)
-                .map((Event eventToUpdate) -> updateEvent(event, eventToUpdate))
+        Event eventAfterUpdate = eventRepository.findById(eventId)
+                .map((Event eventToUpdate) -> updateEvent(updatedEvent, eventToUpdate))
                 .orElseThrow(() -> throwNotFoundException(eventId));
-        Event savedEvent = eventRepository.save(updatedEvent);
+        Event savedEvent = eventRepository.save(eventAfterUpdate);
 
         sendEventUpdate(savedEvent, UpdateType.UPDATED);
 
@@ -191,8 +190,11 @@ public class EventsService extends CrudService {
             return;
         }
 
-        throw new UserNotAuthorized(
-                String.format("Event not found or user is not authorized to delete event %s", eventId));
+        if (eventRepository.findById(eventId).isPresent()) {
+            throw new UserNotAuthorized(String.format("User is not authorized to delete event %s", eventId));
+        }
+
+        throwNotFoundException(eventId);
     }
 
     private boolean isAuthorizedToDelete(String eventId) {
@@ -234,10 +236,6 @@ public class EventsService extends CrudService {
         }
     }
 
-    private static String getDestinationTopic(Event event) {
-        return TOPICS_DEST_PREFIX + EVENTS_TOPIC + event.getEventId() + EVENTS_UPDATES_TOPIC;
-    }
-
     private void setCreatingUserAndSubscribers(Event event) {
         String creatingUserId = getActiveUserId();
 
@@ -265,14 +263,22 @@ public class EventsService extends CrudService {
                 && !sort.equals(POPULARITY);
     }
 
-    private Event updateEvent(Event event, Event eventToUpdate) {
-        if (!getActiveUserId().equals(event.getCreatingUserId())) {
+    private Event updateEvent(Event newEvent, Event oldEvent) {
+        if (!getActiveUserId().equals(oldEvent.getCreatingUserId())) {
             throw new UserNotAuthorized("User is not authorized to update this event");
         }
 
-        eventMapper.updateEventFromDto(event, eventToUpdate);
-        eventToUpdate.setReminderSent(false);
+        return fillOutEventDetails(newEvent, oldEvent);
+    }
 
-        return eventToUpdate;
+    private Event fillOutEventDetails(Event newEvent, Event oldEvent) {
+        return oldEvent.toBuilder()
+                .startTime(newEvent.getStartTime())
+                .endTime(newEvent.getEndTime())
+                .reminderSent(false)
+                .name(newEvent.getName())
+                .location(newEvent.getLocation())
+                .venue(newEvent.getVenue())
+                .build();
     }
 }

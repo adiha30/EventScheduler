@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum UpdateType {
-    UPDATED ("Update"),
-    CANCELED ("Cancel");
+    UPDATED("Update"),
+    CANCELED("Cancel");
 
     private final String value;
 }

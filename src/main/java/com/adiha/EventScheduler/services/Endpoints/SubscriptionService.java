@@ -58,7 +58,7 @@ public class SubscriptionService extends CrudService {
      */
     public void unsubscribe(String eventId) {
         logger.info("Unsubscribing from event with id {}", eventId);
-        
+
         Event eventToSub = eventRepository.findById(eventId)
                 .orElseThrow(() -> throwNotFoundException(eventId));
 

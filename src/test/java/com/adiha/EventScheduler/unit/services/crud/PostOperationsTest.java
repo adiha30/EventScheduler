@@ -1,12 +1,14 @@
-package com.adiha.EventScheduler.services.crud;
+package com.adiha.EventScheduler.unit.services.crud;
 
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.repositories.EventRepository;
 import com.adiha.EventScheduler.repositories.UserRepository;
 import com.adiha.EventScheduler.services.Endpoints.EventsService;
-
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.adiha.EventScheduler.TestUtils.getSimpleEvent;
-import static com.adiha.EventScheduler.TestUtils.getSimpleUser;
+import static com.adiha.EventScheduler.unit.TestUtils.getSimpleEvent;
+import static com.adiha.EventScheduler.unit.TestUtils.getSimpleUser;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;

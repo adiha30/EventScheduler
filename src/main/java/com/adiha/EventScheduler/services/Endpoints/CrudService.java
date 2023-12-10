@@ -1,6 +1,5 @@
 package com.adiha.EventScheduler.services.Endpoints;
 
-import com.adiha.EventScheduler.models.User;
 import com.adiha.EventScheduler.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
