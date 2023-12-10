@@ -1,6 +1,6 @@
 package com.adiha.EventScheduler.controllers;
 
-import com.adiha.EventScheduler.services.Endpoints.SubscriptionService;
+import com.adiha.EventScheduler.services.endpoints.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;

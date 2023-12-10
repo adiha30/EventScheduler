@@ -2,7 +2,7 @@ package com.adiha.EventScheduler.unit.services.crud;
 
 import com.adiha.EventScheduler.models.Event;
 import com.adiha.EventScheduler.repositories.EventRepository;
-import com.adiha.EventScheduler.services.Endpoints.EventsService;
+import com.adiha.EventScheduler.services.endpoints.EventsService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
