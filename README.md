@@ -97,6 +97,9 @@ Proper error handling is essential for a smooth experience. Be aware of the pote
 To execute this project, navigate to the project's directory and execute the following commands:
 
 ```bash
+# Run gradle wrapper
+gradle wrapper
+
 # Build the Docker image
 docker build -t es-app -f Dockerfile .
 
